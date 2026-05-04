@@ -25,54 +25,42 @@
             min-height: 100vh;
         }
 
-        /* SIDEBAR - white background, active item uses primary color #020817 */
+        /* SIDEBAR - clean white background */
         .sidebar {
             width: 280px;
             background: white;
             border-right: 1px solid #eef2f6;
-            padding: 32px 24px;
+            padding: 28px 20px;
             flex-shrink: 0;
         }
         .sidebar-school {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 600;
             color: #020817;
-            letter-spacing: -0.3px;
-            margin-bottom: 40px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #eef2f6;
+            letter-spacing: -0.2px;
+            margin-bottom: 32px;
+            padding-bottom: 8px;
         }
         .sidebar-nav {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
         }
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 12px 18px;
-            border-radius: 12px;
-            width: fit-content;
-            min-width: 160px;
-            color: #5a6e7c;
-            font-weight: 500;
-            font-size: 15px;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #4a5b6e;
+            font-weight: 450;
+            font-size: 14px;
             transition: all 0.2s;
             background: transparent;
+            cursor: default;
         }
         .nav-item.active {
             background: #020817;
-            color: white;
-        }
-        .nav-item.active .nav-icon {
-            color: white;
-        }
-        .nav-icon {
-            font-size: 20px;
-            color: #7f8e9b;
-        }
-        .nav-item.active .nav-icon {
             color: white;
         }
 
@@ -85,7 +73,7 @@
             padding: 28px 32px 32px 32px;
         }
 
-        /* Top bar with search & filter - WHITE search field */
+        /* Top bar */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -123,15 +111,10 @@
             padding: 8px 16px;
             gap: 8px;
             border: 1px solid #cbd5e1;
-            transition: all 0.2s;
         }
         .search-input-wrapper:focus-within {
             border-color: #020817;
             box-shadow: 0 0 0 2px rgba(2, 8, 23, 0.1);
-        }
-        .search-input-wrapper span {
-            color: #8ba0ae;
-            font-size: 16px;
         }
         .search-input {
             border: none;
@@ -170,7 +153,6 @@
             background: #f8fafc;
             border-color: #94a3b8;
         }
-        /* search result count */
         .result-count {
             font-size: 12px;
             color: #5e7180;
@@ -193,7 +175,6 @@
             flex: 1;
             min-width: 170px;
             border: 1px solid #eef2f6;
-            transition: all 0.2s;
         }
         .stat-label {
             font-size: 13px;
@@ -336,12 +317,12 @@
             border-bottom: 1px solid #eff3f8;
             padding-bottom: 10px;
         }
-        .website-list {
+        .comm-list {
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
-        .web-item {
+        .comm-item {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
@@ -349,13 +330,36 @@
             border-bottom: 1px dashed #f0f4f8;
             padding-bottom: 8px;
         }
-        .web-name {
+        .comm-label {
             font-weight: 500;
             color: #2c4b63;
         }
-        .web-stats {
+        .comm-value {
             font-weight: 600;
             color: #020817;
+        }
+        .forms-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .forms-stat {
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+        .forms-stat .stat-number-sm {
+            font-size: 24px;
+            font-weight: 700;
+            color: #020817;
+        }
+        .forms-stat .stat-label-sm {
+            font-size: 12px;
+            color: #5e7180;
+            margin-top: 4px;
         }
         .payment-row {
             display: flex;
@@ -392,35 +396,6 @@
             font-size: 26px;
             font-weight: 700;
             color: #020817;
-        }
-        .activity-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .activity-entry {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f0f4fa;
-            padding-bottom: 12px;
-        }
-        .activity-title {
-            font-weight: 600;
-            color: #1e2f3c;
-            font-size: 14px;
-        }
-        .activity-school {
-            font-size: 12px;
-            color: #5e7180;
-            margin-top: 2px;
-        }
-        .activity-time {
-            font-size: 11px;
-            color: #8ba0ae;
-            background: #f8fafc;
-            padding: 4px 10px;
-            border-radius: 30px;
         }
 
         .school-info-bar {
@@ -490,8 +465,7 @@
         <div class="sidebar-school">Unique School</div>
         <div class="sidebar-nav">
             <div class="nav-item active">
-                <span class="nav-icon">📊</span>
-                <span>app activity</span>
+                app activity
             </div>
         </div>
     </aside>
@@ -525,9 +499,74 @@
 
 <script>
     // ============================================================
-    // GENERATE 160+ REALISTIC SCHOOLS (dynamic dataset)
+    // DATA FROM EXCEL (Attendance, Communications, Forms)
+    // Using Euro currency for Irish schools
     // ============================================================
-    const schoolNames = [
+    
+    // Base data from the Excel file for St. Patrick's Classical School (School Id: 220)
+    const baseSchoolData = {
+        name: "St. Patrick's Classical School",
+        schoolId: 220,
+        // Attendance sheet data
+        attendance: {
+            absenteeNotified: 8798,
+            absenteeSubmitted: 8373,
+            absenteeOutstanding: 425,
+            lateArrival: 2660,
+            lateSubmitted: 2494,
+            lateOutstanding: 301,
+            ptlSubmitted: 3684,
+            ptlNotApproved: 300,
+            ptlSignOut: 3117,
+            pleaseCheck: 102,
+            pleaseCheckChecked: 0
+        },
+        // Communications sheet data
+        communications: {
+            newsCount: 113,
+            newsSharedFacebook: 105,
+            newsSharedX: 2,
+            newsSharedInstagram: 0,
+            notificationCount: 112,
+            notificationsSharedFacebook: 51,
+            notificationsSharedX: 6,
+            notificationsSharedInstagram: 0,
+            galleryCount: 35,
+            cloudCamCount: 705,
+            parentNoteSubmitted: 889,
+            parentNoteAcknowledged: 827,
+            teacherPrivateNotification: 122,
+            systemPrivateNotification: 10282
+        },
+        // Forms sheet data
+        forms: {
+            formsPublished: 2,
+            totalForms: 1193,
+            pendingForms: 171,
+            submittedForms: 1022,
+            medicalFormsSubmitted: 92,
+            medicalConditions: 19,
+            visitorSignIn: 177,
+            visitorSignOut: 147
+        },
+        // Payment data (Euro)
+        payment: {
+            schoolFeesPercent: 87,
+            schoolFeesPending: "€32K",
+            tripsActivitiesPercent: 92,
+            tripsPending: 98,
+            totalAmount: "€282K",
+            totalTransactions: 2845
+        },
+        parentEngagement: "78%",
+        newsPublished: 113,
+        notificationsSent: 112,
+        totalYTD: "€282K",
+        transactions: 2845
+    };
+    
+    // Generate additional schools (160+ total) based on the Excel data pattern
+    const schoolNamePrefixes = [
         "St. Anselms School", "St. Patrick's Classical School", "Northwood Academy", "Riverside Elementary", "Westlake High School",
         "Sunrise International", "Greenfield Public School", "Hillcrest Academy", "Fairmont School", "Lakeside Prep",
         "St. Mary's College", "Holy Cross School", "Bethlehem Academy", "St. Joseph's School", "Christ the King College",
@@ -541,198 +580,308 @@
         "Windsor School", "Beaumont College", "Cavendish School", "Durham Academy", "Exeter School"
     ];
     
-    // Extend to 160+ unique names
     const extendedSchools = [];
     for (let i = 0; i < 162; i++) {
-        if (i < schoolNames.length) {
-            extendedSchools.push(schoolNames[i]);
+        if (i < schoolNamePrefixes.length) {
+            extendedSchools.push(schoolNamePrefixes[i]);
         } else {
             extendedSchools.push(`School ${i+1} · ${["Prep", "Academy", "High", "Elementary", "College"][i % 5]}`);
         }
     }
     const finalSchoolList = [...new Set(extendedSchools)];
     
-    // Generate dynamic school data with realistic variations
+    // Generate school data based on the Excel template
     function generateSchoolData(schoolName, index) {
         const seed = (schoolName.length + index) % 100;
-        const engagementBase = 72 + (seed % 20);
-        const newsBase = 180 + (seed % 150);
-        const notifBase = 2800 + (seed % 1800);
+        const variation = 0.85 + (seed / 100);
+        
+        // Base values from Excel (St. Patrick's data as reference)
+        const absenteeNotified = Math.round(8798 * (0.7 + (seed % 60) / 100));
+        const absenteeSubmitted = Math.round(8373 * (0.7 + (seed % 60) / 100));
+        const absenteeOutstanding = Math.max(50, Math.round(425 * (0.5 + (seed % 100) / 100)));
+        const lateArrival = Math.round(2660 * (0.7 + (seed % 60) / 100));
+        const lateSubmitted = Math.round(2494 * (0.7 + (seed % 60) / 100));
+        const lateOutstanding = Math.max(20, Math.round(301 * (0.4 + (seed % 100) / 100)));
+        const ptlSubmitted = Math.round(3684 * (0.7 + (seed % 60) / 100));
+        const ptlNotApproved = Math.max(30, Math.round(300 * (0.5 + (seed % 90) / 100)));
+        const ptlSignOut = Math.round(3117 * (0.7 + (seed % 60) / 100));
+        
+        const newsCount = Math.round(113 * (0.6 + (seed % 80) / 100));
+        const notificationCount = Math.round(112 * (0.6 + (seed % 80) / 100));
+        const galleryCount = Math.round(35 * (0.5 + (seed % 100) / 100));
+        const parentNoteSubmitted = Math.round(889 * (0.6 + (seed % 80) / 100));
+        const parentNoteAcknowledged = Math.round(827 * (0.6 + (seed % 80) / 100));
+        const teacherPrivateNotification = Math.round(122 * (0.5 + (seed % 100) / 100));
+        const systemPrivateNotification = Math.round(10282 * (0.5 + (seed % 100) / 100));
+        
+        const totalForms = Math.round(1193 * (0.6 + (seed % 80) / 100));
+        const pendingForms = Math.round(171 * (0.4 + (seed % 120) / 100));
+        const submittedForms = totalForms - pendingForms;
+        const medicalFormsSubmitted = Math.round(92 * (0.5 + (seed % 100) / 100));
+        const medicalConditions = Math.round(19 * (0.5 + (seed % 100) / 100));
+        const visitorSignIn = Math.round(177 * (0.5 + (seed % 100) / 100));
+        const visitorSignOut = Math.round(147 * (0.5 + (seed % 100) / 100));
+        
+        const schoolFeesPercent = 75 + (seed % 20);
+        const tripsPercent = 80 + (seed % 18);
         const ytdAmount = 180 + (seed % 180);
-        const transactionsBase = 2100 + (seed % 1400);
-        
-        const absenteeTotal = 14000 + (seed * 37) % 7000;
-        const absenteeOut = 420 + (seed % 480);
-        const lateTotal = 4200 + (seed * 23) % 3200;
-        const lateOut = 120 + (seed % 300);
-        const ptlTotal = 6200 + (seed * 17) % 2800;
-        const ptlOut = 280 + (seed % 350);
-        
-        const absenteeSubmitted = absenteeTotal - absenteeOut;
-        const lateSubmitted = lateTotal - lateOut;
-        const ptlSubmitted = ptlTotal - ptlOut;
-        
-        const absenteeCompletion = ((absenteeSubmitted / absenteeTotal)*100).toFixed(1);
-        const lateCompletion = ((lateSubmitted / lateTotal)*100).toFixed(1);
-        const ptlCompletion = ((ptlSubmitted / ptlTotal)*100).toFixed(1);
-        
-        const schoolFeesPercent = 82 + (seed % 15);
-        const tripsPercent = 85 + (seed % 12);
         
         return {
             name: schoolName,
-            parentEngagement: `${engagementBase}%`,
-            newsPublished: newsBase,
-            notificationsSent: notifBase,
-            totalYTD: `$${ytdAmount}K`,
-            transactions: transactionsBase,
+            parentEngagement: `${70 + (seed % 20)}%`,
+            newsPublished: newsCount,
+            notificationsSent: notificationCount,
+            totalYTD: `€${ytdAmount}K`,
+            transactions: 2000 + (seed % 1500),
             attendance: {
-                absentee: { total: Math.round(absenteeTotal), submitted: Math.round(absenteeSubmitted), outstanding: Math.round(absenteeOut), completion: parseFloat(absenteeCompletion) },
-                lateArrival: { total: Math.round(lateTotal), submitted: Math.round(lateSubmitted), outstanding: Math.round(lateOut), completion: parseFloat(lateCompletion) },
-                permissionToLeave: { total: Math.round(ptlTotal), submitted: Math.round(ptlSubmitted), outstanding: Math.round(ptlOut), completion: parseFloat(ptlCompletion) }
+                absenteeNotified: absenteeNotified,
+                absenteeSubmitted: absenteeSubmitted,
+                absenteeOutstanding: absenteeOutstanding,
+                lateArrival: lateArrival,
+                lateSubmitted: lateSubmitted,
+                lateOutstanding: lateOutstanding,
+                ptlSubmitted: ptlSubmitted,
+                ptlNotApproved: ptlNotApproved,
+                ptlSignOut: ptlSignOut
             },
-            website: { 
-                news: `${newsBase} published · ${Math.round(newsBase * 48)} views`, 
-                gallery: `${35 + (seed % 30)} albums · ${Math.round((35 + seed % 30) * 210)} views`, 
-                calendar: `${45 + (seed % 40)} events (${8 + seed % 15} upcoming)` 
+            communications: {
+                newsCount: newsCount,
+                notificationCount: notificationCount,
+                galleryCount: galleryCount,
+                cloudCamCount: Math.round(705 * (0.5 + (seed % 100) / 100)),
+                parentNoteSubmitted: parentNoteSubmitted,
+                parentNoteAcknowledged: parentNoteAcknowledged,
+                teacherPrivateNotification: teacherPrivateNotification,
+                systemPrivateNotification: systemPrivateNotification
             },
-            payment: { 
-                schoolFees: schoolFeesPercent, 
-                schoolFeesPending: `$${Math.round(18000 + seed * 230)} pending`, 
-                tripsActivities: tripsPercent, 
-                tripsPending: 45 + (seed % 85), 
-                totalAmount: `$${ytdAmount}K`, 
-                totalTransactions: transactionsBase 
+            forms: {
+                totalForms: totalForms,
+                pendingForms: pendingForms,
+                submittedForms: submittedForms,
+                medicalFormsSubmitted: medicalFormsSubmitted,
+                medicalConditions: medicalConditions,
+                visitorSignIn: visitorSignIn,
+                visitorSignOut: visitorSignOut
             },
-            recentActivity: [
-                { title: "New absentee note submitted", school: schoolName, time: "2 min ago" },
-                { title: "Medical form approved", school: schoolName, time: "7 min ago" },
-                { title: "Late arrival recorded", school: schoolName, time: "14 min ago" },
-                { title: "Parent notification sent", school: schoolName, time: "22 min ago" },
-                { title: "Outstanding alert", school: schoolName, time: "35 min ago" }
-            ]
+            payment: {
+                schoolFeesPercent: schoolFeesPercent,
+                schoolFeesPending: `€${Math.round(25 + seed)}K`,
+                tripsActivitiesPercent: tripsPercent,
+                tripsPending: 50 + (seed % 80),
+                totalAmount: `€${ytdAmount}K`,
+                totalTransactions: 2000 + (seed % 1500)
+            }
         };
     }
     
     // Build complete school map (160+ schools)
     const allSchoolsMap = new Map();
-    finalSchoolList.forEach((name, idx) => {
-        allSchoolsMap.set(name, generateSchoolData(name, idx));
-    });
     
-    // Override with exact data for the two main schools
-    const stAnselmsExact = {
-        name: "St. Anselms School",
+    // Add exact Excel data for St. Patrick's Classical School
+    allSchoolsMap.set("St. Patrick's Classical School", {
+        name: "St. Patrick's Classical School",
         parentEngagement: "78%",
-        newsPublished: 258,
-        notificationsSent: 3420,
-        totalYTD: "$282K",
+        newsPublished: 113,
+        notificationsSent: 112,
+        totalYTD: "€282K",
         transactions: 2845,
         attendance: {
-            absentee: { total: 18043, submitted: 17193, outstanding: 850, completion: 95.3 },
-            lateArrival: { total: 5550, submitted: 5204, outstanding: 346, completion: 93.8 },
-            permissionToLeave: { total: 7804, submitted: 7259, outstanding: 545, completion: 93.0 }
+            absenteeNotified: 8798,
+            absenteeSubmitted: 8373,
+            absenteeOutstanding: 425,
+            lateArrival: 2660,
+            lateSubmitted: 2494,
+            lateOutstanding: 301,
+            ptlSubmitted: 3684,
+            ptlNotApproved: 300,
+            ptlSignOut: 3117
         },
-        website: { news: "258 published · 12.4K views", gallery: "45 albums · 8.2K views", calendar: "67 events (12 upcoming)" },
-        payment: { schoolFees: 87, schoolFeesPending: "$32K pending", tripsActivities: 92, tripsPending: 98, totalAmount: "$282K", totalTransactions: 2845 },
-        recentActivity: [
-            { title: "New absentee note submitted", school: "St. Anselms School", time: "2 min ago" },
-            { title: "Medical form approved", school: "St. Patrick's Classical School", time: "5 min ago" },
-            { title: "Late arrival recorded", school: "St. Anselms School", time: "8 min ago" },
-            { title: "Parent notification sent", school: "St. Patrick's Classical School", time: "12 min ago" },
-            { title: "Outstanding absentee alert", school: "St. Anselms School", time: "18 min ago" }
-        ]
-    };
-    const stPatExact = {
-        name: "St. Patrick's Classical School",
-        parentEngagement: "82%",
-        newsPublished: 312,
-        notificationsSent: 4100,
-        totalYTD: "$341K",
-        transactions: 3340,
-        attendance: {
-            absentee: { total: 19240, submitted: 18345, outstanding: 895, completion: 95.4 },
-            lateArrival: { total: 5890, submitted: 5710, outstanding: 180, completion: 96.9 },
-            permissionToLeave: { total: 8120, submitted: 7650, outstanding: 470, completion: 94.2 }
+        communications: {
+            newsCount: 113,
+            notificationCount: 112,
+            galleryCount: 35,
+            cloudCamCount: 705,
+            parentNoteSubmitted: 889,
+            parentNoteAcknowledged: 827,
+            teacherPrivateNotification: 122,
+            systemPrivateNotification: 10282
         },
-        website: { news: "312 published · 15.1K views", gallery: "52 albums · 9.8K views", calendar: "74 events (18 upcoming)" },
-        payment: { schoolFees: 89, schoolFeesPending: "$28K pending", tripsActivities: 94, tripsPending: 72, totalAmount: "$341K", totalTransactions: 3340 },
-        recentActivity: [
-            { title: "Medical form approved", school: "St. Patrick's Classical School", time: "3 min ago" },
-            { title: "Parent notification sent", school: "St. Patrick's Classical School", time: "7 min ago" },
-            { title: "New absentee note submitted", school: "St. Anselms School", time: "11 min ago" },
-            { title: "Late arrival recorded", school: "St. Patrick's Classical School", time: "14 min ago" },
-            { title: "Permission to leave requested", school: "St. Patrick's Classical School", time: "22 min ago" }
-        ]
-    };
-    allSchoolsMap.set("St. Anselms School", stAnselmsExact);
-    allSchoolsMap.set("St. Patrick's Classical School", stPatExact);
+        forms: {
+            totalForms: 1193,
+            pendingForms: 171,
+            submittedForms: 1022,
+            medicalFormsSubmitted: 92,
+            medicalConditions: 19,
+            visitorSignIn: 177,
+            visitorSignOut: 147
+        },
+        payment: {
+            schoolFeesPercent: 87,
+            schoolFeesPending: "€32K",
+            tripsActivitiesPercent: 92,
+            tripsPending: 98,
+            totalAmount: "€282K",
+            totalTransactions: 2845
+        }
+    });
     
-    // Helper for indicator
+    // Add St. Anselms School with similar structure
+    allSchoolsMap.set("St. Anselms School", {
+        name: "St. Anselms School",
+        parentEngagement: "76%",
+        newsPublished: 98,
+        notificationsSent: 105,
+        totalYTD: "€251K",
+        transactions: 2590,
+        attendance: {
+            absenteeNotified: 8540,
+            absenteeSubmitted: 8125,
+            absenteeOutstanding: 415,
+            lateArrival: 2520,
+            lateSubmitted: 2370,
+            lateOutstanding: 150,
+            ptlSubmitted: 3560,
+            ptlNotApproved: 280,
+            ptlSignOut: 3010
+        },
+        communications: {
+            newsCount: 98,
+            notificationCount: 105,
+            galleryCount: 32,
+            cloudCamCount: 680,
+            parentNoteSubmitted: 845,
+            parentNoteAcknowledged: 790,
+            teacherPrivateNotification: 110,
+            systemPrivateNotification: 9890
+        },
+        forms: {
+            totalForms: 1120,
+            pendingForms: 158,
+            submittedForms: 962,
+            medicalFormsSubmitted: 85,
+            medicalConditions: 16,
+            visitorSignIn: 160,
+            visitorSignOut: 135
+        },
+        payment: {
+            schoolFeesPercent: 85,
+            schoolFeesPending: "€29K",
+            tripsActivitiesPercent: 90,
+            tripsPending: 85,
+            totalAmount: "€251K",
+            totalTransactions: 2590
+        }
+    });
+    
+    // Generate remaining schools
+    finalSchoolList.forEach((name, idx) => {
+        if (!allSchoolsMap.has(name)) {
+            allSchoolsMap.set(name, generateSchoolData(name, idx));
+        }
+    });
+    
     function getOutstandingIndicator(outstanding, total) {
         let percent = (outstanding / total) * 100;
-        if (percent > 6) return 'red';
-        if (percent >= 3) return 'yellow';
+        if (percent > 8) return 'red';
+        if (percent >= 4) return 'yellow';
         return 'green';
     }
     
     function renderDashboard(school) {
+        const att = school.attendance;
+        const comm = school.communications;
+        const forms = school.forms;
+        const totalOutstanding = att.absenteeOutstanding + att.lateOutstanding + att.ptlNotApproved;
+        const totalSubmitted = att.absenteeSubmitted + att.lateSubmitted + att.ptlSubmitted;
+        
         const html = `
             <div class="school-info-bar">
-                <div class="current-school">🏫 Currently viewing: <strong>${school.name}</strong></div>
+                <div class="current-school">Currently viewing: ${school.name}</div>
                 <div class="status-badge">
                     <span><span class="indicator-dot green"></span> Good</span>
                     <span><span class="indicator-dot yellow"></span> Attention</span>
                     <span><span class="indicator-dot red"></span> Critical</span>
                 </div>
             </div>
+            
             <div class="stats-row">
                 <div class="stat-card"><div class="stat-label">Parent Engagement</div><div class="stat-number">${school.parentEngagement}</div><div class="stat-sub">Families onboard</div></div>
-                <div class="stat-card"><div class="stat-label">News</div><div class="stat-number">${school.newsPublished}</div><div class="stat-sub">Articles published</div></div>
-                <div class="stat-card"><div class="stat-label">Notifications</div><div class="stat-number">${school.notificationsSent.toLocaleString()}</div><div class="stat-sub">Sent this month</div></div>
+                <div class="stat-card"><div class="stat-label">News Published</div><div class="stat-number">${comm.newsCount}</div><div class="stat-sub">Articles & updates</div></div>
+                <div class="stat-card"><div class="stat-label">Notifications Sent</div><div class="stat-number">${comm.notificationCount.toLocaleString()}</div><div class="stat-sub">This month</div></div>
                 <div class="stat-card"><div class="stat-label">Total YTD</div><div class="stat-number">${school.totalYTD}</div><div class="stat-sub">from ${school.transactions.toLocaleString()} transactions</div></div>
             </div>
+            
             <div class="section-card">
                 <div class="section-title">Attendance Overview <span>Year to Date</span></div>
                 <div class="attendance-grid">
-                    <div class="attendance-col"><h4>📋 Absentee</h4>
-                        <div class="data-row"><span class="data-label">Total</span><span class="data-value">${school.attendance.absentee.total.toLocaleString()}</span></div>
-                        <div class="data-row"><span class="data-label">Submitted</span><span class="data-value">${school.attendance.absentee.submitted.toLocaleString()}</span></div>
-                        <div class="data-row"><span class="data-label">Outstanding</span><span class="indicator"><span class="indicator-dot ${getOutstandingIndicator(school.attendance.absentee.outstanding, school.attendance.absentee.total)}"></span><span class="pending-value">${school.attendance.absentee.outstanding}</span></span></div>
-                        <div class="data-row"><span class="data-label">Completion</span><span class="data-value">${school.attendance.absentee.completion}%</span></div>
+                    <div class="attendance-col"><h4>Absentee</h4>
+                        <div class="data-row"><span class="data-label">Notified</span><span class="data-value">${att.absenteeNotified.toLocaleString()}</span></div>
+                        <div class="data-row"><span class="data-label">Submitted</span><span class="data-value">${att.absenteeSubmitted.toLocaleString()}</span></div>
+                        <div class="data-row"><span class="data-label">Outstanding</span><span class="indicator"><span class="indicator-dot ${getOutstandingIndicator(att.absenteeOutstanding, att.absenteeNotified)}"></span><span class="pending-value">${att.absenteeOutstanding}</span></span></div>
                     </div>
-                    <div class="attendance-col"><h4>⏰ Late Arrival</h4>
-                        <div class="data-row"><span class="data-label">Total</span><span class="data-value">${school.attendance.lateArrival.total.toLocaleString()}</span></div>
-                        <div class="data-row"><span class="data-label">Submitted</span><span class="data-value">${school.attendance.lateArrival.submitted.toLocaleString()}</span></div>
-                        <div class="data-row"><span class="data-label">Outstanding</span><span class="indicator"><span class="indicator-dot ${getOutstandingIndicator(school.attendance.lateArrival.outstanding, school.attendance.lateArrival.total)}"></span><span class="pending-value">${school.attendance.lateArrival.outstanding}</span></span></div>
-                        <div class="data-row"><span class="data-label">Completion</span><span class="data-value">${school.attendance.lateArrival.completion}%</span></div>
+                    <div class="attendance-col"><h4>Late Arrival</h4>
+                        <div class="data-row"><span class="data-label">Total</span><span class="data-value">${att.lateArrival.toLocaleString()}</span></div>
+                        <div class="data-row"><span class="data-label">Submitted</span><span class="data-value">${att.lateSubmitted.toLocaleString()}</span></div>
+                        <div class="data-row"><span class="data-label">Outstanding</span><span class="indicator"><span class="indicator-dot ${getOutstandingIndicator(att.lateOutstanding, att.lateArrival)}"></span><span class="pending-value">${att.lateOutstanding}</span></span></div>
                     </div>
-                    <div class="attendance-col"><h4>📄 Permission to Leave</h4>
-                        <div class="data-row"><span class="data-label">Total</span><span class="data-value">${school.attendance.permissionToLeave.total.toLocaleString()}</span></div>
-                        <div class="data-row"><span class="data-label">Submitted</span><span class="data-value">${school.attendance.permissionToLeave.submitted.toLocaleString()}</span></div>
-                        <div class="data-row"><span class="data-label">Outstanding</span><span class="indicator"><span class="indicator-dot ${getOutstandingIndicator(school.attendance.permissionToLeave.outstanding, school.attendance.permissionToLeave.total)}"></span><span class="pending-value">${school.attendance.permissionToLeave.outstanding}</span></span></div>
-                        <div class="data-row"><span class="data-label">Completion</span><span class="data-value">${school.attendance.permissionToLeave.completion}%</span></div>
+                    <div class="attendance-col"><h4>Permission to Leave</h4>
+                        <div class="data-row"><span class="data-label">Submitted</span><span class="data-value">${att.ptlSubmitted.toLocaleString()}</span></div>
+                        <div class="data-row"><span class="data-label">Not Approved</span><span class="indicator"><span class="indicator-dot ${getOutstandingIndicator(att.ptlNotApproved, att.ptlSubmitted)}"></span><span class="pending-value">${att.ptlNotApproved}</span></span></div>
+                        <div class="data-row"><span class="data-label">Sign Out</span><span class="data-value">${att.ptlSignOut.toLocaleString()}</span></div>
                     </div>
                 </div>
                 <div class="divider-light"></div>
                 <div style="display: flex; justify-content: flex-end; gap: 20px; font-size: 13px;">
-                    <span>✅ total submitted: ${(school.attendance.absentee.submitted + school.attendance.lateArrival.submitted + school.attendance.permissionToLeave.submitted).toLocaleString()}</span>
-                    <span>⚠️ pending actions: <strong>${(school.attendance.absentee.outstanding + school.attendance.lateArrival.outstanding + school.attendance.permissionToLeave.outstanding)}</strong></span>
+                    <span>Total submitted: ${totalSubmitted.toLocaleString()}</span>
+                    <span>Pending actions: <strong>${totalOutstanding}</strong></span>
                 </div>
             </div>
+            
             <div class="two-col-grid">
                 <div class="left-stack">
-                    <div class="info-card"><div class="card-head">🌐 Website</div><div class="website-list"><div class="web-item"><span class="web-name">News</span><span class="web-stats">${school.website.news}</span></div><div class="web-item"><span class="web-name">Gallery</span><span class="web-stats">${school.website.gallery}</span></div><div class="web-item"><span class="web-name">Calendar</span><span class="web-stats">${school.website.calendar}</span></div></div></div>
-                    <div class="info-card"><div class="card-head">💰 Payment</div><div class="payment-row"><span class="payment-label">School Fees</span><span><span class="payment-percent">${school.payment.schoolFees}%</span> <span class="pending-note">(${school.payment.schoolFeesPending})</span></span></div><div class="payment-row"><span class="payment-label">Trips & Activities</span><span><span class="payment-percent">${school.payment.tripsActivities}%</span> <span class="pending-note">(${school.payment.tripsPending} pending)</span></span></div><div class="total-payment"><div style="font-size: 13px;">Total collected YTD</div><div class="total-amount">${school.payment.totalAmount}</div><div style="font-size: 12px;">from ${school.payment.totalTransactions.toLocaleString()} transactions</div></div></div>
+                    <div class="info-card">
+                        <div class="card-head">Communications</div>
+                        <div class="comm-list">
+                            <div class="comm-item"><span class="comm-label">News Count</span><span class="comm-value">${comm.newsCount}</span></div>
+                            <div class="comm-item"><span class="comm-label">Gallery Count</span><span class="comm-value">${comm.galleryCount}</span></div>
+                            <div class="comm-item"><span class="comm-label">CloudCam Count</span><span class="comm-value">${comm.cloudCamCount.toLocaleString()}</span></div>
+                            <div class="comm-item"><span class="comm-label">Parent Notes Submitted</span><span class="comm-value">${comm.parentNoteSubmitted.toLocaleString()}</span></div>
+                            <div class="comm-item"><span class="comm-label">Parent Notes Acknowledged</span><span class="comm-value">${comm.parentNoteAcknowledged.toLocaleString()}</span></div>
+                            <div class="comm-item"><span class="comm-label">Teacher Private Notifications</span><span class="comm-value">${comm.teacherPrivateNotification.toLocaleString()}</span></div>
+                            <div class="comm-item"><span class="comm-label">System Private Notifications</span><span class="comm-value">${comm.systemPrivateNotification.toLocaleString()}</span></div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="card-head">Payment Summary</div>
+                        <div class="payment-row"><span class="payment-label">School Fees</span><span><span class="payment-percent">${school.payment.schoolFeesPercent}%</span> <span class="pending-note">(${school.payment.schoolFeesPending} pending)</span></span></div>
+                        <div class="payment-row"><span class="payment-label">Trips & Activities</span><span><span class="payment-percent">${school.payment.tripsActivitiesPercent}%</span> <span class="pending-note">(${school.payment.tripsPending} pending)</span></span></div>
+                        <div class="total-payment"><div style="font-size: 13px;">Total collected YTD</div><div class="total-amount">${school.payment.totalAmount}</div><div style="font-size: 12px;">from ${school.payment.totalTransactions.toLocaleString()} transactions</div></div>
+                    </div>
                 </div>
-                <div class="right-stack"><div class="info-card"><div class="card-head">🔔 Recent Activity</div><div class="activity-feed">${school.recentActivity.map(act => `<div class="activity-entry"><div><div class="activity-title">${act.title}</div><div class="activity-school">${act.school}</div></div><div class="activity-time">${act.time}</div></div>`).join('')}</div></div></div>
+                <div class="right-stack">
+                    <div class="info-card">
+                        <div class="card-head">Forms Summary</div>
+                        <div class="forms-grid">
+                            <div class="forms-stat"><div class="stat-number-sm">${forms.totalForms.toLocaleString()}</div><div class="stat-label-sm">Total Forms</div></div>
+                            <div class="forms-stat"><div class="stat-number-sm">${forms.submittedForms.toLocaleString()}</div><div class="stat-label-sm">Submitted</div></div>
+                            <div class="forms-stat"><div class="stat-number-sm">${forms.pendingForms}</div><div class="stat-label-sm">Pending</div></div>
+                        </div>
+                        <div class="divider-light"></div>
+                        <div class="comm-list">
+                            <div class="comm-item"><span class="comm-label">Medical Forms Submitted</span><span class="comm-value">${forms.medicalFormsSubmitted}</span></div>
+                            <div class="comm-item"><span class="comm-label">Medical Conditions</span><span class="comm-value">${forms.medicalConditions}</span></div>
+                            <div class="comm-item"><span class="comm-label">Visitor Sign-In</span><span class="comm-value">${forms.visitorSignIn}</span></div>
+                            <div class="comm-item"><span class="comm-label">Visitor Sign-Out</span><span class="comm-value">${forms.visitorSignOut}</span></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="footer-note">⚠️ Color indicators: red = high pending (>6%), yellow = moderate (3-6%), green = low (<3%)</div>
+            <div class="footer-note">Color indicators: red = high pending (>8%), yellow = moderate (4-8%), green = low (<4%) | All amounts in Euro</div>
         `;
         document.getElementById('dynamicDashboard').innerHTML = html;
     }
     
-    // search/filter logic for 160+ schools
+    // Search and filter logic
     const searchInput = document.getElementById('schoolSearchInput');
     const statusFilter = document.getElementById('statusFilter');
     const resetBtn = document.getElementById('resetSearchBtn');
@@ -754,14 +903,14 @@
         if (filterValue === "high_outstanding") {
             filteredByStatus = matchedSchools.filter(s => {
                 const data = allSchoolsMap.get(s);
-                const totalOut = data.attendance.absentee.outstanding + data.attendance.lateArrival.outstanding + data.attendance.permissionToLeave.outstanding;
-                return totalOut > 1300;
+                const totalOut = data.attendance.absenteeOutstanding + data.attendance.lateOutstanding + data.attendance.ptlNotApproved;
+                return totalOut > 1200;
             });
         } else if (filterValue === "moderate") {
             filteredByStatus = matchedSchools.filter(s => {
                 const data = allSchoolsMap.get(s);
-                const totalOut = data.attendance.absentee.outstanding + data.attendance.lateArrival.outstanding + data.attendance.permissionToLeave.outstanding;
-                return totalOut >= 700 && totalOut <= 1300;
+                const totalOut = data.attendance.absenteeOutstanding + data.attendance.lateOutstanding + data.attendance.ptlNotApproved;
+                return totalOut >= 600 && totalOut <= 1200;
             });
         }
         
