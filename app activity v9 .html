@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Unique School | App Activity Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            color: #0f2b3b;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        /* ===== LAYOUT: SIDEBAR + MAIN ===== */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR (as per request: school name + only 'app activity') */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2edf2;
+            padding: 32px 20px;
+            flex-shrink: 0;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .school-title-side {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            color: #136b8d;
+            margin-bottom: 40px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #dcecf3;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #eef5f9;
+            border-radius: 48px;
+            width: fit-content;
+            color: #136b8d;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        /* MAIN PANEL */
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-x: auto;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background: white;
+            padding: 16px 32px;
+            border-bottom: 1px solid #e2edf2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .page-headline h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1c4e6c;
+        }
+        .page-headline p {
+            font-size: 13px;
+            color: #5f8398;
+            margin-top: 4px;
+        }
+        .action-group {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .filter-btn, .export-btn {
+            background: #f8fafc;
+            border: 1px solid #cbdde6;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #1f5e7e;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .filter-btn:hover, .export-btn:hover {
+            background: #eef2f5;
+            border-color: #9bb7c8;
+        }
+        .date-badge {
+            background: #eef2f5;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #2b6f8f;
+            font-weight: 500;
+        }
+
+        /* DASHBOARD CONTENT */
+        .dashboard-content {
+            padding: 28px 32px;
+        }
+
+        /* KPI row / cards row (first row metrics) */
+        .kpi-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            margin-bottom: 32px;
+        }
+        .kpi-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 24px;
+            flex: 1;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e7eff4;
+        }
+        .kpi-label {
+            font-size: 14px;
+            color: #5e7f92;
+            margin-bottom: 10px;
+            letter-spacing: 0.2px;
+        }
+        .kpi-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #136b8d;
+            letter-spacing: -0.5px;
+        }
+        .kpi-sub {
+            font-size: 13px;
+            color: #7f9aab;
+            margin-top: 8px;
+        }
+
+        /* 2 column layout for middle sections (attendance overview + payment, website) */
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-bottom: 36px;
+        }
+        .attendance-card {
+            flex: 2;
+            background: white;
+            border-radius: 28px;
+            padding: 22px 26px;
+            border: 1px solid #e7eff4;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+        .right-stack {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .info-card {
+            background: white;
+            border-radius: 28px;
+            padding: 22px 24px;
+            border: 1px solid #e7eff4;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f5777;
+            margin-bottom: 20px;
+            letter-spacing: -0.2px;
+            border-left: 4px solid #2c7da0;
+            padding-left: 14px;
+        }
+        .attendance-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            justify-content: space-between;
+        }
+        .metric-block {
+            flex: 1;
+            min-width: 140px;
+        }
+        .metric-header {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c6d8f;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #e2ecf2;
+            display: inline-block;
+            padding-bottom: 4px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .stat-label {
+            color: #4e748b;
+        }
+        .stat-value {
+            font-weight: 700;
+            color: #1b4f6b;
+        }
+        .stat-pending {
+            font-weight: 700;
+            color: #c96f3e;
+        }
+        .divider-light {
+            height: 1px;
+            background: #ecf3f7;
+            margin: 14px 0;
+        }
+
+        .payment-row-flex {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            align-items: baseline;
+        }
+        .payment-label {
+            font-size: 15px;
+            color: #2c617b;
+        }
+        .payment-percent {
+            font-weight: 700;
+            font-size: 22px;
+            color: #136b8d;
+        }
+        .pending-small {
+            font-size: 12px;
+            color: #c4723a;
+            font-weight: 500;
+        }
+        .total-box {
+            background: #f3f9fe;
+            padding: 16px;
+            border-radius: 24px;
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .website-stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .web-stat {
+            display: flex;
+            justify-content: space-between;
+        }
+        .web-title {
+            font-weight: 500;
+            color: #346f8c;
+        }
+        .web-number {
+            font-weight: 700;
+            color: #1f5e7e;
+        }
+
+        /* recent activity table style */
+        .recent-section {
+            background: white;
+            border-radius: 28px;
+            padding: 22px 26px;
+            margin-bottom: 32px;
+            border: 1px solid #e7eff4;
+        }
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .activity-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eff4f8;
+            padding-bottom: 12px;
+        }
+        .activity-text {
+            font-size: 14px;
+            color: #245e7c;
+        }
+        .activity-school {
+            font-size: 13px;
+            font-weight: 500;
+            color: #3f7e9e;
+            margin-top: 4px;
+        }
+        .activity-time {
+            font-size: 12px;
+            color: #80a2b5;
+        }
+
+        /* DATA TABLE (Attendance Management) */
+        .data-wrapper {
+            background: white;
+            border-radius: 28px;
+            padding: 0px 0px 12px 0px;
+            border: 1px solid #e7eff4;
+            overflow-x: auto;
+        }
+        .table-header-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px 12px 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .search-input {
+            padding: 8px 16px;
+            border-radius: 60px;
+            border: 1px solid #d0e2ec;
+            background: white;
+            width: 240px;
+            font-size: 13px;
+            font-weight: 400;
+        }
+        .school-tabs {
+            display: flex;
+            gap: 12px;
+        }
+        .pill {
+            background: #eef3f8;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #2b6f8f;
+            cursor: pointer;
+        }
+        .pill.active {
+            background: #2c7da0;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            text-align: left;
+            padding: 14px 12px;
+            background: #fafdff;
+            color: #2f6a88;
+            font-weight: 600;
+            border-bottom: 1px solid #e2ecf2;
+        }
+        td {
+            padding: 12px 12px;
+            border-bottom: 1px solid #eff5f9;
+            color: #1f4a63;
+        }
+        .outstanding-highlight {
+            font-weight: 700;
+            color: #ce6d3a;
+        }
+        .school-name-cell {
+            font-weight: 600;
+            color: #136b8d;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            text-align: right;
+            margin-top: 20px;
+            color: #7a99ab;
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                width: 220px;
+            }
+            .dashboard-content {
+                padding: 20px;
+            }
+            .two-columns {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- SIDEBAR: only school name and ONE item "app activity" -->
+    <aside class="sidebar">
+        <div class="school-title-side">Unique School</div>
+        <div style="margin-top: 16px;">
+            <div class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>app activity</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <main class="main-panel">
+        <!-- Top bar with filter and export -->
+        <div class="top-bar">
+            <div class="page-headline">
+                <h2>App Activity Dashboard</h2>
+                <p>Monitor school activity and engagement metrics</p>
+            </div>
+            <div class="action-group">
+                <div class="date-badge">Year to Date</div>
+                <button class="filter-btn">🔍 Filter</button>
+                <button class="export-btn">⬇ Export</button>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <!-- KPI Row: Key stats (bold numbers) -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Parent engagement</div>
+                    <div class="kpi-number">78%</div>
+                    <div class="kpi-sub">Families onboard</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">News published</div>
+                    <div class="kpi-number">258</div>
+                    <div class="kpi-sub">Articles + 12.4K views</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Notifications (month)</div>
+                    <div class="kpi-number">3,420</div>
+                    <div class="kpi-sub">Sent this month</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Total YTD payments</div>
+                    <div class="kpi-number">$282K</div>
+                    <div class="kpi-sub">2,845 transactions</div>
+                </div>
+            </div>
+
+            <!-- Two columns: left = Attendance Overview (No graph) / right = Payments + Website -->
+            <div class="two-columns">
+                <!-- Attendance overview card (detailed numeric, no graph) -->
+                <div class="attendance-card">
+                    <div class="section-title">Attendance overview · year to date</div>
+                    <div class="attendance-metrics">
+                        <!-- Absentee column -->
+                        <div class="metric-block">
+                            <div class="metric-header">Absentee</div>
+                            <div class="stat-row"><span class="stat-label">Total</span><span class="stat-value">18,043</span></div>
+                            <div class="stat-row"><span class="stat-label">Submitted / Recorded</span><span class="stat-value">17,193</span></div>
+                            <div class="stat-row"><span class="stat-label">Outstanding / Pending</span><span class="stat-pending">850</span></div>
+                            <div class="stat-row"><span class="stat-label">% pending</span><span class="stat-pending">4.7%</span></div>
+                        </div>
+                        <!-- Late arrival column -->
+                        <div class="metric-block">
+                            <div class="metric-header">Late arrival</div>
+                            <div class="stat-row"><span class="stat-label">Total</span><span class="stat-value">5,550</span></div>
+                            <div class="stat-row"><span class="stat-label">Submitted / Recorded</span><span class="stat-value">5,204</span></div>
+                            <div class="stat-row"><span class="stat-label">Outstanding / Pending</span><span class="stat-pending">346</span></div>
+                            <div class="stat-row"><span class="stat-label">% pending</span><span class="stat-pending">6.2%</span></div>
+                        </div>
+                        <!-- Permission to leave column -->
+                        <div class="metric-block">
+                            <div class="metric-header">Permission to leave</div>
+                            <div class="stat-row"><span class="stat-label">Total</span><span class="stat-value">7,804</span></div>
+                            <div class="stat-row"><span class="stat-label">Submitted / Recorded</span><span class="stat-value">7,259</span></div>
+                            <div class="stat-row"><span class="stat-label">Outstanding / Pending</span><span class="stat-pending">545</span></div>
+                            <div class="stat-row"><span class="stat-label">% pending</span><span class="stat-pending">7.0%</span></div>
+                        </div>
+                    </div>
+                    <div class="divider-light"></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; margin-top: 10px;">
+                        <span><strong style="font-weight: 700;">⏺ outstanding items total:</strong> 1,741 pending actions</span>
+                        <span><strong style="font-weight: 700;">submission rate:</strong> 93.8%</span>
+                    </div>
+                </div>
+
+                <!-- Right Stack: Payment & Website -->
+                <div class="right-stack">
+                    <div class="info-card">
+                        <div class="section-title" style="margin-bottom: 16px;">Payment summary</div>
+                        <div class="payment-row-flex">
+                            <span class="payment-label">School fees</span>
+                            <span><span class="payment-percent">87%</span> <span class="pending-small">($32K pending)</span></span>
+                        </div>
+                        <div class="payment-row-flex">
+                            <span class="payment-label">Trips & activities</span>
+                            <span><span class="payment-percent">92%</span> <span class="pending-small">(98 pending)</span></span>
+                        </div>
+                        <div class="total-box">
+                            <div style="font-size: 13px; color:#4f7f98;">Total collected YTD</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #136b8d;">$282K</div>
+                            <div style="font-size: 12px;">from 2,845 transactions</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="section-title" style="margin-bottom: 16px;">Website & content</div>
+                        <div class="website-stats-list">
+                            <div class="web-stat"><span class="web-title">📰 News</span><span><span class="web-number">258</span> published · 12.4K views</span></div>
+                            <div class="web-stat"><span class="web-title">🖼 Gallery</span><span><span class="web-number">45</span> albums · 8.2K views</span></div>
+                            <div class="web-stat"><span class="web-title">📅 Calendar</span><span><span class="web-number">67</span> events (12 upcoming)</span></div>
+                        </div>
+                        <div class="divider-light"></div>
+                        <div><span class="web-title">📣 global engagement</span> <span style="float: right; font-weight: 700;">78% families active</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section (no graph) -->
+            <div class="recent-section">
+                <div class="section-title">Recent activity</div>
+                <div class="activity-list">
+                    <div class="activity-row">
+                        <div><div class="activity-text">New absentee note submitted</div><div class="activity-school">St. Anselms School</div></div>
+                        <div class="activity-time">2 min ago</div>
+                    </div>
+                    <div class="activity-row">
+                        <div><div class="activity-text">Medical form approved</div><div class="activity-school">St. Patrick's Classical School</div></div>
+                        <div class="activity-time">5 min ago</div>
+                    </div>
+                    <div class="activity-row">
+                        <div><div class="activity-text">Late arrival recorded</div><div class="activity-school">St. Anselms School</div></div>
+                        <div class="activity-time">8 min ago</div>
+                    </div>
+                    <div class="activity-row">
+                        <div><div class="activity-text">Parent notification sent</div><div class="activity-school">St. Patrick's Classical School</div></div>
+                        <div class="activity-time">12 min ago</div>
+                    </div>
+                    <div class="activity-row">
+                        <div><div class="activity-text">Outstanding absentee alert </div><div class="activity-school">St. Anselms School</div></div>
+                        <div class="activity-time">15 min ago</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Management Table + Filter + Export consistent inside -->
+            <div class="data-wrapper">
+                <div class="table-header-tools">
+                    <div>
+                        <input type="text" placeholder="Search schools by name..." class="search-input" id="schoolSearchInput">
+                    </div>
+                    <div class="school-tabs">
+                        <span class="pill active" data-filter="all">All Schools</span>
+                        <span class="pill" data-filter="anselms">St. Anselms</span>
+                        <span class="pill" data-filter="patrick">St. Patrick's</span>
+                    </div>
+                    <button class="export-btn" id="exportTableBtn" style="background:white;">📎 Export table</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr><th>School name</th><th>Absentee notified</th><th>Submitted</th><th>Outstanding</th><th>Late arrival</th><th>Late submitted</th><th>Late outstanding</th><th>PTL submitted</th><th>PTL not approved</th><th>PTL sign out</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr data-school="St. Anselms School" data-filterkey="anselms">
+                                <td class="school-name-cell">St. Anselms School</td>
+                                <td>8,798</td><td>8,373</td><td class="outstanding-highlight">425</td>
+                                <td>2,660</td><td>2,494</td><td class="outstanding-highlight">301</td>
+                                <td>3,684</td><td>300</td><td>3,111</td>
+                            </tr>
+                            <tr data-school="St. Patrick's Classical School" data-filterkey="patrick">
+                                <td class="school-name-cell">St. Patrick's Classical School</td>
+                                <td>9,245</td><td>8,820</td><td class="outstanding-highlight">425</td>
+                                <td>2,890</td><td>2,710</td><td>180</td>
+                                <td>4,120</td><td>245</td><td>3,565</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="footer-note">
+                    * Outstanding items require immediate attention · pending forms: 369 across both schools
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // School filter logic + search + export CSV (simple)
+    const searchInput = document.getElementById('schoolSearchInput');
+    const filterPills = document.querySelectorAll('.pill');
+    const tableRows = document.querySelectorAll('#attendanceTable tbody tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        let activeFilter = 'all';
+        for (let pill of filterPills) {
+            if (pill.classList.contains('active')) {
+                activeFilter = pill.getAttribute('data-filter');
+                break;
+            }
+        }
+        tableRows.forEach(row => {
+            const schoolName = row.querySelector('td:first-child')?.innerText.toLowerCase() || '';
+            const filterKey = row.getAttribute('data-filterkey');
+            let matchesFilter = (activeFilter === 'all') || (filterKey === activeFilter);
+            let matchesSearch = schoolName.includes(searchTerm) || searchTerm === '';
+            if (matchesFilter && matchesSearch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    filterPills.forEach(pill => {
+        pill.addEventListener('click', function() {
+            filterPills.forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            filterTable();
+        });
+    });
+
+    // Export table to CSV
+    const exportBtn = document.getElementById('exportTableBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            const table = document.getElementById('attendanceTable');
+            const rows = table.querySelectorAll('tr');
+            let csvContent = "";
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('th, td');
+                const rowData = Array.from(cols).map(col => '"' + col.innerText.replace(/"/g, '""') + '"').join(",");
+                csvContent += rowData + "\n";
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute('download', 'attendance_management.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    // small initial consistency
+    filterTable();
+</script>
+</body>
+</html>
