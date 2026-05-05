@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>St. Patrick's · Executive Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fa;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e2f3a;
+            line-height: 1.4;
+        }
+
+        /* minimalist reset - only bold on headings and light semibold for numbers */
+        h1, h2, h3, h4, .card-title {
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        /* numbers: clean, reduced font size, semibold (500) not heavy */
+        .alert-number, .stat-number, .kpi-value, .payment-percent, .total-amount,
+        .stat-number-lg, .web-number, .form-stat-number, .rate-number, .big-number {
+            font-weight: 500;
+        }
+
+        /* specific reduced sizes for all numeric displays */
+        .alert-number {
+            font-size: 22px;
+            font-weight: 500;
+        }
+        .stat-number-lg {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 500;
+        }
+        .total-amount {
+            font-size: 22px;
+            font-weight: 500;
+        }
+        .payment-percent {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .form-stat-number {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .rate-number {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .web-number {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* base text weight */
+        body, p, .tagline, .alert-sub, .badge, .pending-note, .web-item,
+        .kpi-label, .form-label, .sidebar-footer, .small-link, .alert-text,
+        .activity-detail, .card-header span:not(.card-title), .stat-label {
+            font-weight: 400;
+        }
+
+        /* layout with sidebar */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR - minimal, only app activity */
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid #eef2f5;
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            flex-shrink: 0;
+        }
+
+        .logo-area h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e2f3a;
+        }
+        .logo-area p {
+            font-size: 11px;
+            color: #8ba0ae;
+            margin-top: 6px;
+        }
+
+        .sidebar-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .sidebar-nav li {
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #2c5a6e;
+            cursor: default;
+        }
+        .sidebar-nav li.active {
+            background: #f0f4f8;
+            color: #1e6f8f;
+            font-weight: 500;
+        }
+        .sidebar-nav li:not(.active) {
+            display: none;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 10px;
+            color: #9bb2c0;
+            border-top: 1px solid #eef2f5;
+            padding-top: 20px;
+        }
+
+        /* main content - cleaner spacing */
+        .main-content {
+            flex: 1;
+            padding: 32px 40px;
+            overflow-x: auto;
+        }
+
+        .dashboard {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* header with inline filter and export - NEW */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .school-header {
+            flex: 1;
+        }
+        .school-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e2f3a;
+            margin-bottom: 4px;
+        }
+        .tagline {
+            font-size: 13px;
+            color: #6f8ea0;
+            border-left: 2px solid #cbdbe0;
+            padding-left: 14px;
+        }
+        .filter-export-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 6px 12px 6px 16px;
+            border-radius: 40px;
+            border: 1px solid #e2eaf0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .ytd-dropdown {
+            background: transparent;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1e6f8f;
+            padding: 8px 4px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+        .ytd-dropdown:focus {
+            outline: none;
+        }
+        .export-btn {
+            background: #f0f4f8;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #2c5a6e;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .export-btn:hover {
+            background: #e4ecf2;
+        }
+        .export-btn:active {
+            background: #d8e2ea;
+        }
+
+        /* 3-col layout - structured, consistent gaps */
+        .summary-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 0;
+        }
+
+        .priority-rail {
+            flex: 1.2;
+            min-width: 260px;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #edf2f6;
+            padding: 20px;
+        }
+
+        .center-rail {
+            flex: 1.8;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .right-rail {
+            flex: 1.2;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #edf2f6;
+            padding: 20px;
+            transition: none;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eff3f8;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2a627a;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .small-link {
+            font-size: 11px;
+            color: #90aaba;
+            text-decoration: none;
+        }
+
+        /* alerts minimal */
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .alert-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid;
+            padding-left: 12px;
+        }
+        .alert-critical {
+            border-left-color: #cd5c5c;
+        }
+        .alert-warning {
+            border-left-color: #daa06a;
+        }
+        .alert-info {
+            border-left-color: #6f9fbf;
+        }
+        .alert-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1f3846;
+        }
+        .alert-number {
+            font-size: 22px;
+            font-weight: 500;
+            color: #1e2f3a;
+        }
+        .text-red {
+            color: #cd5c5c !important;
+        }
+        .text-green {
+            color: #4d8272 !important;
+        }
+        .text-yellow {
+            color: #cd8c4a !important;
+        }
+        .alert-sub {
+            font-size: 10px;
+            color: #89a2b2;
+            margin-top: 4px;
+        }
+        .badge {
+            background: #f0f4f8;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #4d6f82;
+        }
+
+        .kpi-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            gap: 8px;
+        }
+        .kpi-block {
+            text-align: left;
+        }
+        .kpi-label {
+            font-size: 11px;
+            color: #7d9aab;
+            margin-bottom: 6px;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 500;
+            color: #1e2f3a;
+        }
+
+        /* attendance compact */
+        .attendance-stats-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        .stat-block {
+            flex: 1;
+        }
+        .stat-block .kpi-label {
+            margin-bottom: 4px;
+        }
+        .stat-number-lg {
+            font-size: 24px;
+            font-weight: 500;
+            color: #1e2f3a;
+        }
+        .submitted-row {
+            font-size: 12px;
+            margin-top: 6px;
+            color: #5d7f91;
+        }
+
+        hr {
+            margin: 14px 0;
+            border: 0;
+            height: 1px;
+            background: #ecf2f7;
+        }
+
+        /* forms overview clean grid */
+        .forms-overview-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .form-category {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid #f0f4f8;
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .form-label {
+            font-size: 12px;
+            color: #2f5568;
+        }
+        .form-stats {
+            text-align: right;
+            font-size: 12px;
+        }
+        .form-stat-number {
+            font-size: 18px;
+            font-weight: 500;
+            color: #1e2f3a;
+            margin-right: 4px;
+        }
+        .form-pending-badge {
+            font-size: 11px;
+            color: #cd5c5c;
+        }
+        .submission-rate {
+            background: #fafcfd;
+            border-radius: 16px;
+            padding: 12px;
+            margin-top: 8px;
+            text-align: center;
+            border: 1px solid #eef3f8;
+        }
+        .rate-number {
+            font-size: 20px;
+            font-weight: 500;
+            color: #4d8272;
+        }
+
+        /* payment & euro */
+        .payment-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #1e2f3a;
+            border-bottom: 1px solid #eff3f8;
+            padding-bottom: 10px;
+        }
+        .payment-percent {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .pending-note {
+            font-size: 10px;
+            color: #b47c58;
+        }
+        .total-ytd {
+            background: #fafcfd;
+            padding: 12px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 4px;
+        }
+        .total-amount {
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        .website-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .web-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+        .web-number {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .compact-doc-stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .doc-block {
+            text-align: left;
+        }
+        .doc-number {
+            font-size: 22px;
+            font-weight: 500;
+            color: #1e2f3a;
+        }
+
+        .removed-table-placeholder {
+            display: none;
+        }
+
+        /* responsive */
+        @media (max-width: 1000px) {
+            .main-content {
+                padding: 20px;
+            }
+            .summary-grid {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #eef2f5;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 24px;
+            }
+            .sidebar-nav ul {
+                flex-direction: row;
+            }
+            .sidebar-footer {
+                display: none;
+            }
+            .header-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-export-bar {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-wrapper">
+    <!-- SIDEBAR: only App Activity active -->
+    <aside class="sidebar">
+        <div class="logo-area">
+            <h2>St. Patrick's</h2>
+            <p>education suite</p>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="active">App Activity</li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div>secure v2</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="dashboard">
+            <!-- Header row with title + YTD dropdown + Export button inline -->
+            <div class="header-row">
+                <div class="school-header">
+                    <h1 class="school-name">St. Patrick's School</h1>
+                    <div class="tagline">executive dashboard · attendance & forms overview</div>
+                </div>
+                <div class="filter-export-bar">
+                    <select id="ytdFilter" class="ytd-dropdown">
+                        <option value="2026">Year to Date 2026</option>
+                        <option value="2025">Year to Date 2025</option>
+                        <option value="2024">Year to Date 2024</option>
+                    </select>
+                    <button id="exportDataBtn" class="export-btn">
+                        <span>📎</span> Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <!-- LEFT: priority alerts -->
+                <div class="priority-rail">
+                    <div class="card-header">
+                        <span class="card-title">Priority</span>
+                        <span class="small-link">alerts</span>
+                    </div>
+                    <div class="alert-list">
+                        <div class="alert-item alert-critical">
+                            <div>
+                                <div class="alert-text">Outstanding absences</div>
+                                <div class="alert-number text-red" id="alertAbsences">850</div>
+                                <div class="alert-sub">unsubmitted</div>
+                            </div>
+                            <span class="badge">critical</span>
+                        </div>
+                        <div class="alert-item alert-warning">
+                            <div>
+                                <div class="alert-text">Late arrivals missing</div>
+                                <div class="alert-number text-yellow" id="alertLate">346</div>
+                                <div class="alert-sub">out of 5,550</div>
+                            </div>
+                            <span class="badge">attention</span>
+                        </div>
+                        <div class="alert-item alert-info">
+                            <div>
+                                <div class="alert-text">PTL pending</div>
+                                <div class="alert-number" id="alertPtl">545</div>
+                                <div class="alert-sub">permission to leave</div>
+                            </div>
+                            <span class="badge">review</span>
+                        </div>
+                        <div class="alert-item" style="border-left-color: #9bb7c8;">
+                            <div>
+                                <div class="alert-text">Unresolved medical</div>
+                                <div class="alert-number" id="alertMedical">210</div>
+                                <div class="alert-sub">forms pending</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="kpi-row">
+                        <div class="kpi-block">
+                            <div class="kpi-label">Active schools</div>
+                            <div class="kpi-value">2</div>
+                        </div>
+                        <div class="kpi-block">
+                            <div class="kpi-label">Parent engagement</div>
+                            <div class="kpi-value text-green" id="engagementValue">78%</div>
+                        </div>
+                        <div class="kpi-block">
+                            <div class="kpi-label">Monthly notif.</div>
+                            <div class="kpi-value" id="notificationsValue">3,420</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 18px;">
+                        <div class="kpi-label">Total outstanding items</div>
+                        <div class="stat-number-lg text-red" id="totalOutstanding">1,741</div>
+                        <div class="alert-sub">absences+late+PTL</div>
+                    </div>
+                </div>
+
+                <!-- CENTER: attendance + forms overview -->
+                <div class="center-rail">
+                    <!-- attendance card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Attendance YTD</span>
+                            <span class="small-link">submitted vs pending</span>
+                        </div>
+                        <div class="attendance-stats-group">
+                            <div class="stat-block">
+                                <div class="kpi-label">Absentee</div>
+                                <div class="stat-number-lg" id="totalAbsent">18,043</div>
+                                <div class="submitted-row">Submitted: <span id="submittedAbsent">17,193</span></div>
+                                <div class="submitted-row"><span class="text-red">Outstanding: <span id="outstandingAbsent">850</span></span></div>
+                            </div>
+                            <div class="stat-block">
+                                <div class="kpi-label">Late arrival</div>
+                                <div class="stat-number-lg" id="totalLate">5,550</div>
+                                <div class="submitted-row">Recorded: <span id="recordedLate">5,204</span></div>
+                                <div class="submitted-row"><span class="text-yellow">Outstanding: <span id="outstandingLate">346</span></span></div>
+                            </div>
+                            <div class="stat-block">
+                                <div class="kpi-label">Permission to leave</div>
+                                <div class="stat-number-lg" id="totalPtl">7,804</div>
+                                <div class="submitted-row">Approved: <span id="approvedPtl">7,259</span></div>
+                                <div class="submitted-row"><span class="text-red">Pending: <span id="pendingPtl">545</span></span></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                            <div><span class="kpi-label">Total submitted forms</span><br><span class="stat-number-lg" id="totalSubmittedForms">17,193</span> <span style="font-size:11px; color:#4d8272;">▲12%</span></div>
+                            <div><span class="kpi-label">Pending overall</span><br><span class="stat-number-lg text-red" id="pendingOverall">369</span></div>
+                        </div>
+                    </div>
+
+                    <!-- forms overview card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Forms overview</span>
+                            <span class="small-link">submission tracker</span>
+                        </div>
+                        <div class="forms-overview-grid">
+                            <div class="form-category">
+                                <span class="form-label">Medical consent</span>
+                                <div class="form-stats">
+                                    <span class="form-stat-number" id="medicalSubmitted">2,280</span> submitted
+                                    <span class="form-pending-badge"> · <span id="medicalPending">210</span> pending</span>
+                                </div>
+                            </div>
+                            <div class="form-category">
+                                <span class="form-label">Absence notes</span>
+                                <div class="form-stats">
+                                    <span class="form-stat-number" id="absenceProcessed">17,193</span> processed
+                                    <span class="form-pending-badge text-red"> · <span id="absenceOutstanding">850</span> open</span>
+                                </div>
+                            </div>
+                            <div class="form-category">
+                                <span class="form-label">Permission to leave</span>
+                                <div class="form-stats">
+                                    <span class="form-stat-number" id="ptlApproved">7,259</span> approved
+                                    <span class="form-pending-badge text-red"> · <span id="ptlPending">545</span> pending</span>
+                                </div>
+                            </div>
+                            <div class="form-category">
+                                <span class="form-label">Late submission</span>
+                                <div class="form-stats">
+                                    <span class="form-stat-number" id="lateReported">5,204</span> reported
+                                    <span class="form-pending-badge text-yellow"> · <span id="lateMissing">346</span> missing</span>
+                                </div>
+                            </div>
+                            <div class="form-category">
+                                <span class="form-label">Health records</span>
+                                <div class="form-stats">
+                                    <span class="form-stat-number" id="healthUploaded">1,892</span> uploaded
+                                    <span class="form-pending-badge text-red"> · <span id="healthMissing">124</span> missing</span>
+                                </div>
+                            </div>
+                            <div class="submission-rate">
+                                <div class="kpi-label">Completion rate</div>
+                                <div class="rate-number" id="completionRate">94.2%</div>
+                                <div style="font-size:10px;">▲ +3% vs last quarter</div>
+                            </div>
+                        </div>
+                        <div class="small-link" style="display: inline-block; margin-top: 14px;">all forms →</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT RAIL: Payment (€) + website + documents -->
+                <div class="right-rail">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Payments</span>
+                            <span class="small-link">YTD</span>
+                        </div>
+                        <div class="payment-stats">
+                            <div class="payment-row">
+                                <span>School fees</span>
+                                <span><span class="payment-percent" id="schoolFeesPercent">87%</span> <span class="pending-note" id="schoolFeesPending">(€32K pending)</span></span>
+                            </div>
+                            <div class="payment-row">
+                                <span>Trips & activities</span>
+                                <span><span class="payment-percent" id="tripsPercent">92%</span> <span class="pending-note" id="tripsPending">(98 pending)</span></span>
+                            </div>
+                            <div class="total-ytd">
+                                <div class="kpi-label">Total collected</div>
+                                <div class="total-amount" id="totalCollected">€282K</div>
+                                <div style="font-size: 10px;" id="transactionCount">from 2,845 transactions</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Website</span>
+                            <span class="small-link">engagement</span>
+                        </div>
+                        <div class="website-stats">
+                            <div class="web-item"><span>News</span><span><span class="web-number" id="newsCount">258</span> published · <span id="newsViews">12.4K</span> views</span></div>
+                            <div class="web-item"><span>Gallery</span><span><span class="web-number" id="galleryAlbums">45</span> albums · <span id="galleryViews">8.2K</span> views</span></div>
+                            <div class="web-item"><span>Calendar</span><span><span class="web-number" id="calendarEvents">67</span> events · <span id="upcomingEvents">12</span> upcoming</span></div>
+                        </div>
+                        <hr>
+                        <div><span class="kpi-label">Families onboard</span> <span class="stat-number-lg" style="font-size: 20px; color:#4d8272;" id="familiesOnboard">78%</span>  ·  <span style="font-size:12px;" id="notificationsSent">3,420 notifications</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title" style="margin-bottom: 14px; font-size:14px;">Documents & compliance</div>
+                        <div class="compact-doc-stats">
+                            <div class="doc-block">
+                                <div class="kpi-label">Medical forms</div>
+                                <div class="doc-number" id="docMedical">2,280</div>
+                            </div>
+                            <div class="doc-block">
+                                <div class="kpi-label">Visitor sign-ins</div>
+                                <div class="doc-number" id="docVisitor">400</div>
+                            </div>
+                            <div class="doc-block">
+                                <div class="kpi-label">Total pending</div>
+                                <div class="doc-number text-red" id="docTotalPending">369</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 14px;">
+                            <div class="kpi-label">Published content</div>
+                            <div><span class="web-number" id="publishedContent">290</span> news + gallery items</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="removed-table-placeholder"></div>
+
+            <div style="margin-top: 32px; text-align: right; font-size: 10px; color: #a7bfcf; border-top: 1px solid #eef2f5; padding-top: 16px;">
+                St. Patrick's School · real-time dashboard · minimal interface
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    (function() {
+        // Sample dataset for YTD switching (simulates filter change)
+        const dataSets = {
+            2026: {
+                alertAbsences: 850, alertLate: 346, alertPtl: 545, alertMedical: 210,
+                engagement: "78%", notifications: "3,420", totalOutstanding: 1741,
+                totalAbsent: 18043, submittedAbsent: 17193, outstandingAbsent: 850,
+                totalLate: 5550, recordedLate: 5204, outstandingLate: 346,
+                totalPtl: 7804, approvedPtl: 7259, pendingPtl: 545,
+                totalSubmittedForms: 17193, pendingOverall: 369,
+                medicalSubmitted: 2280, medicalPending: 210,
+                absenceProcessed: 17193, absenceOutstanding: 850,
+                ptlApproved: 7259, ptlPending: 545,
+                lateReported: 5204, lateMissing: 346,
+                healthUploaded: 1892, healthMissing: 124,
+                completionRate: "94.2%",
+                schoolFeesPercent: "87%", schoolFeesPending: "(€32K pending)",
+                tripsPercent: "92%", tripsPending: "(98 pending)",
+                totalCollected: "€282K", transactionCount: "from 2,845 transactions",
+                newsCount: 258, newsViews: "12.4K", galleryAlbums: 45, galleryViews: "8.2K",
+                calendarEvents: 67, upcomingEvents: 12, familiesOnboard: "78%", notificationsSent: "3,420",
+                docMedical: 2280, docVisitor: 400, docTotalPending: 369, publishedContent: 290
+            },
+            2025: {
+                alertAbsences: 1120, alertLate: 490, alertPtl: 680, alertMedical: 305,
+                engagement: "74%", notifications: "3,120", totalOutstanding: 2290,
+                totalAbsent: 19200, submittedAbsent: 18080, outstandingAbsent: 1120,
+                totalLate: 6100, recordedLate: 5610, outstandingLate: 490,
+                totalPtl: 8400, approvedPtl: 7720, pendingPtl: 680,
+                totalSubmittedForms: 18080, pendingOverall: 495,
+                medicalSubmitted: 2580, medicalPending: 305,
+                absenceProcessed: 18080, absenceOutstanding: 1120,
+                ptlApproved: 7720, ptlPending: 680,
+                lateReported: 5610, lateMissing: 490,
+                healthUploaded: 2050, healthMissing: 180,
+                completionRate: "91.5%",
+                schoolFeesPercent: "84%", schoolFeesPending: "(€41K pending)",
+                tripsPercent: "88%", tripsPending: "(142 pending)",
+                totalCollected: "€254K", transactionCount: "from 2,610 transactions",
+                newsCount: 232, newsViews: "11.1K", galleryAlbums: 42, galleryViews: "7.4K",
+                calendarEvents: 62, upcomingEvents: 10, familiesOnboard: "74%", notificationsSent: "3,120",
+                docMedical: 2580, docVisitor: 365, docTotalPending: 495, publishedContent: 272
+            }
+        };
+        // Fallback for 2024 uses 2025 with slight modifications
+        dataSets[2024] = {
+            ...dataSets[2025],
+            totalCollected: "€228K", transactionCount: "from 2,380 transactions",
+            engagement: "69%", familiesOnboard: "69%", notificationsSent: "2,950",
+            totalSubmittedForms: 16820, pendingOverall: 610
+        };
+
+        function updateUI(year) {
+            const ds = dataSets[year] || dataSets[2026];
+            document.getElementById('alertAbsences').innerText = ds.alertAbsences;
+            document.getElementById('alertLate').innerText = ds.alertLate;
+            document.getElementById('alertPtl').innerText = ds.alertPtl;
+            document.getElementById('alertMedical').innerText = ds.alertMedical;
+            document.getElementById('engagementValue').innerText = ds.engagement;
+            document.getElementById('notificationsValue').innerText = ds.notifications;
+            document.getElementById('totalOutstanding').innerText = ds.totalOutstanding;
+            document.getElementById('totalAbsent').innerText = ds.totalAbsent;
+            document.getElementById('submittedAbsent').innerText = ds.submittedAbsent;
+            document.getElementById('outstandingAbsent').innerText = ds.outstandingAbsent;
+            document.getElementById('totalLate').innerText = ds.totalLate;
+            document.getElementById('recordedLate').innerText = ds.recordedLate;
+            document.getElementById('outstandingLate').innerText = ds.outstandingLate;
+            document.getElementById('totalPtl').innerText = ds.totalPtl;
+            document.getElementById('approvedPtl').innerText = ds.approvedPtl;
+            document.getElementById('pendingPtl').innerText = ds.pendingPtl;
+            document.getElementById('totalSubmittedForms').innerText = ds.totalSubmittedForms;
+            document.getElementById('pendingOverall').innerText = ds.pendingOverall;
+            document.getElementById('medicalSubmitted').innerText = ds.medicalSubmitted;
+            document.getElementById('medicalPending').innerText = ds.medicalPending;
+            document.getElementById('absenceProcessed').innerText = ds.absenceProcessed;
+            document.getElementById('absenceOutstanding').innerText = ds.absenceOutstanding;
+            document.getElementById('ptlApproved').innerText = ds.ptlApproved;
+            document.getElementById('ptlPending').innerText = ds.ptlPending;
+            document.getElementById('lateReported').innerText = ds.lateReported;
+            document.getElementById('lateMissing').innerText = ds.lateMissing;
+            document.getElementById('healthUploaded').innerText = ds.healthUploaded;
+            document.getElementById('healthMissing').innerText = ds.healthMissing;
+            document.getElementById('completionRate').innerText = ds.completionRate;
+            document.getElementById('schoolFeesPercent').innerText = ds.schoolFeesPercent;
+            document.getElementById('schoolFeesPending').innerText = ds.schoolFeesPending;
+            document.getElementById('tripsPercent').innerText = ds.tripsPercent;
+            document.getElementById('tripsPending').innerText = ds.tripsPending;
+            document.getElementById('totalCollected').innerText = ds.totalCollected;
+            document.getElementById('transactionCount').innerText = ds.transactionCount;
+            document.getElementById('newsCount').innerText = ds.newsCount;
+            document.getElementById('newsViews').innerText = ds.newsViews;
+            document.getElementById('galleryAlbums').innerText = ds.galleryAlbums;
+            document.getElementById('galleryViews').innerText = ds.galleryViews;
+            document.getElementById('calendarEvents').innerText = ds.calendarEvents;
+            document.getElementById('upcomingEvents').innerText = ds.upcomingEvents;
+            document.getElementById('familiesOnboard').innerText = ds.familiesOnboard;
+            document.getElementById('notificationsSent').innerText = ds.notificationsSent;
+            document.getElementById('docMedical').innerText = ds.docMedical;
+            document.getElementById('docVisitor').innerText = ds.docVisitor;
+            document.getElementById('docTotalPending').innerText = ds.docTotalPending;
+            document.getElementById('publishedContent').innerText = ds.publishedContent;
+        }
+
+        const dropdown = document.getElementById('ytdFilter');
+        dropdown.addEventListener('change', (e) => {
+            updateUI(e.target.value);
+        });
+
+        // Export button: simple CSV export of key metrics
+        const exportBtn = document.getElementById('exportDataBtn');
+        exportBtn.addEventListener('click', () => {
+            const year = dropdown.value;
+            const ds = dataSets[year] || dataSets[2026];
+            const rows = [
+                ["Metric", "Value"],
+                ["School", "St. Patrick's School"],
+                ["Year", year],
+                ["Outstanding Absences", ds.alertAbsences],
+                ["Late Missing", ds.alertLate],
+                ["PTL Pending", ds.alertPtl],
+                ["Medical Pending", ds.alertMedical],
+                ["Parent Engagement", ds.engagement],
+                ["Total Outstanding Items", ds.totalOutstanding],
+                ["Total Absentee", ds.totalAbsent],
+                ["Total Late Arrivals", ds.totalLate],
+                ["Total PTL", ds.totalPtl],
+                ["Total Submitted Forms", ds.totalSubmittedForms],
+                ["Forms Completion Rate", ds.completionRate],
+                ["Total Collected (EUR)", ds.totalCollected],
+                ["Families Onboard", ds.familiesOnboard]
+            ];
+            const csvContent = rows.map(row => row.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = `st_patricks_export_${year}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        });
+
+        // initial load
+        updateUI('2026');
+    })();
+</script>
+</body>
+</html>
